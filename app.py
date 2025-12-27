@@ -82,6 +82,18 @@ def stripe_webhook():
 
     if event["type"] == "checkout.session.completed":
         session = event["data"]["object"]
+
+line_items = stripe.checkout.Session.list_line_items(
+    session["id"],
+    limit=1
+)
+
+item = line_items.data[0]
+price = stripe.Price.retrieve(item.price.id)
+product = stripe.Product.retrieve(price.product)
+
+print("📦 METADATA PRODOTTO:", product.metadata)
+
         app.logger.info(f"💰 PAGAMENTO COMPLETATO")
         app.logger.info(f"👉 Metadata: {session.get('metadata')}")
 
