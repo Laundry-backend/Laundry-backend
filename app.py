@@ -1,3 +1,12 @@
+import logging
+
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s [%(levelname)s] %(message)s",
+)
+
+logger = logging.getLogger(__name__)
+
 import os
 import stripe
 from flask import Flask, request, jsonify
@@ -33,18 +42,18 @@ def attiva_macchina(luogo, macchina):
     config = MACHINES.get(luogo, {}).get(macchina)
 
     if not config:
-        print("❌ Macchina non trovata:", luogo, macchina)
+        logger.info("❌ Macchina non trovata:", luogo, macchina)
         return
 
     impulsi = config["impulses"]
 
-    print(f"▶️ Avvio {macchina} ({luogo}) - impulsi: {impulsi}")
+    logger.info(f"▶️ Avvio {macchina} ({luogo}) - impulsi: {impulsi}")
 
     for i in range(impulsi):
-        print(f"   Impulso {i+1}")
+        logger.info(f"   Impulso {i+1}")
         time.sleep(1)
 
-    print("✅ Ciclo completato")
+    logger.info("✅ Ciclo completato")
 
 @app.route("/")
 def home():
