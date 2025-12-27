@@ -52,32 +52,43 @@ def home():
 
 @app.route("/webhook/stripe", methods=["POST"])
 def stripe_webhook():
-    print("📥 Webhook ricevuto")
-
     payload = request.data
-    print("📦 RAW PAYLOAD:")
-    print(payload)
-
     sig_header = request.headers.get("Stripe-Signature")
-    print("🔐 Signature:", sig_header)
 
     try:
         event = stripe.Webhook.construct_event(
             payload, sig_header, STRIPE_WEBHOOK_SECRET
         )
-        print("✅ Evento verificato")
     except Exception as e:
-        print("❌ Errore verifica webhook:", str(e))
+        print("❌ Errore firma webhook:", e)
         return "", 400
 
-    print("📨 Tipo evento:", event["type"])
+    print("✅ Evento ricevuto:", event["type"])
 
     if event["type"] == "checkout.session.completed":
         session = event["data"]["object"]
-        print("💰 PAGAMENTO COMPLETATO")
-        print("👉 Metadata:", session.get("metadata"))
+
+        # Recupero line items (serve per arrivare al prodotto)
+        line_items = stripe.checkout.Session.list_line_items(
+            session["id"],
+            limit=1
+        )
+
+        item = line_items.data[0]
+        price_id = item.price.id
+
+        # Recupero il prodotto collegato
+        price = stripe.Price.retrieve(price_id)
+        product = stripe.Product.retrieve(price.product)
+
+        print("🎯 PRODOTTO:", product.name)
+        print("📦 METADATA:", product.metadata)
+
+        # Qui userai product.metadata per decidere cosa fare
+        # es: product.metadata["machine"]
 
     return "", 200
+
 
 
 if __name__ == "__main__":
