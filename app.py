@@ -72,6 +72,7 @@ def stripe_webhook():
     if event["type"] == "checkout.session.completed":
         session = event["data"]["object"]
 
+        # Recupero prodotto
         line_items = stripe.checkout.Session.list_line_items(
             session["id"],
             limit=1
@@ -80,14 +81,17 @@ def stripe_webhook():
         item = line_items.data[0]
         price = stripe.Price.retrieve(item.price.id)
         product = stripe.Product.retrieve(price.product)
-
+        
+        # Metadata
         machine = product.metadata.get("machine")
         location = product.metadata.get("location")
+        impulses = int(product.metadata.get("impulse", 1))
 
-        logger.info(f"💰 PAGAMENTO COMPLETATO")
-        logger.info(f"📦 Prodotto: {product.name}")
+        # Log
+        logger.info(f"📦 PRODOTTO: {product.name}")
         logger.info(f"📍 Location: {location}")
         logger.info(f"⚙️ Macchina: {machine}")
+        logger.info(f"🔁 Impulsi da inviare: {impulses}")
 
     return "", 200
 
