@@ -27,16 +27,79 @@ MACHINES = {
             "impulses": 1,
             "descrizione": "Lavatrice 8kg"
         },
-        "asciugatrice_1": {
-            "impulses": 2,
-            "descrizione": "Asciugatrice 1"
+        "lavatrice_2": {
+            "impulses": 1,
+            "descrizione": "Lavatrice 8kg"
+        },
+        "lavatrice_3": {
+            "impulses": 1,
+            "descrizione": "Lavatrice 8kg"
+		},
+        "lavatrice_4": {
+		    "impulses": 1,
+			"descrizione": "Lavatrice 8kg"
+		},
+        "lavatrice_5": {
+		    "impulses": 1,
+			"descrizione": "Lavatrice 18kg"
+		},
+        "lavatrice_6": {
+		    "impulses": 1,
+			"descrizione": "Lavatrice 18kg"
+		},
+        "lavatrice_7": {
+		    "impulses": 1,
+			"descrizione": "Lavatrice 18kg"			
+        },
+        "asciugatrice_8": {
+            "impulses": 1,
+            "descrizione": "Asciugatrice"
+        },
+        "asciugatrice_9": {
+            "impulses": 1,
+            "descrizione": "Asciugatrice"
+        },
+        "asciugatrice_10": {
+            "impulses": 1,
+            "descrizione": "Asciugatrice"
+        },
+        "asciugatrice_11": {
+            "impulses": 1,
+            "descrizione": "Asciugatrice"
+        },
+        "asciugatrice_12": {
+            "impulses": 1,
+            "descrizione": "Asciugatrice"			
         }
     },
     "verucchio": {
         "lavatrice_1": {
-            "impulses": 3,
-            "descrizione": "Lavatrice grande"
+            "impulses": 5,
+            "descrizione": "Lavatrice animali"
         }
+        "lavatrice_3": {
+            "impulses": 5,
+            "descrizione": "Lavatrice 8kg"
+        }
+        "lavatrice_4": {
+            "impulses": 5,
+            "descrizione": "Lavatrice 8kg"
+        }
+        "lavatrice_5": {
+            "impulses": 8,
+            "descrizione": "Lavatrice 18kg"	
+        }
+        "lavatrice_6": {
+            "impulses": 8,
+            "descrizione": "Lavatrice 18kg"
+        }
+        "asciugatrice_7": {
+            "impulses": 5,
+            "descrizione": "asciugatrice"		
+        }
+        "asciugatrice_8": {
+            "impulses": 5,
+            "descrizione": "asciugatrice"			
     }
 }
 
