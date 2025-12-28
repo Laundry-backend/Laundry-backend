@@ -78,24 +78,48 @@ def stripe_webhook():
         session = event["data"]["object"]
 
         # Recupera il prodotto acquistato
+ @app.route("/webhook/stripe", methods=["POST"])
+def stripe_webhook():
+    logger.info("📥 Webhook ricevuto")
+
+    payload = request.data
+    sig_header = request.headersget("Stripe-Signature")
+
+    try:
+        event = stripe.Webhook.construct_event(
+            payload, sig_header, STRIPE_WEBHOOK_SECRET
+        )
+        logger.info("✅ Evento verificato")
+    except Exception as e:
+        logger.error(f"❌ Errore verifica webhook: {e}")
+        return "", 400
+
+    logger.info(f"📨 Tipo evento: {event['type']}")
+
+    if event["type"] == "checkout.session.completed":
+        session = event["data"]["object"]
+
+        # Recupera riga di acquisto
         line_items = stripe.checkout.Session.list_line_items(
             session["id"],
             limit=1
         )
 
         item = line_items.data[0]
+
+        # Recupera il prodotto associato
         price = stripe.Price.retrieve(item.price.id)
         product = stripe.Product.retrieve(price.product)
 
-        logger.info(f"💰 PAGAMENTO COMPLETATO")
-        logger.info(f"📦 PRODOTTO: {product.name}")
-        logger.info(f"📦 METADATA: {product.metadata}")
+        # 🔥 QUI I METADATA
+        machine = product.metadata.get("machine")
+        location = product.metadata.get("location")
 
-        # Qui in futuro:
-        # attiva_macchina(product.metadata)
+        logger.info(f"💰 PAGAMENTO COMPLETATO")
+        logger.info(f"🏷️ Prodotto: {product.name}")
+        logger.info(f"📍 Location: {location}")
+        logger.info(f"⚙️ Macchina: {machine}")
 
     return "", 200
-
-
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)
