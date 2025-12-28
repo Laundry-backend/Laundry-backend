@@ -34,22 +34,22 @@ MACHINES = {
         "lavatrice_3": {
             "impulses": 1,
             "descrizione": "Lavatrice 8kg"
-		},
+        },
         "lavatrice_4": {
-		    "impulses": 1,
-			"descrizione": "Lavatrice 8kg"
-		},
+            "impulses": 1,
+            "descrizione": "Lavatrice 8kg"
+        },
         "lavatrice_5": {
-		    "impulses": 1,
-			"descrizione": "Lavatrice 18kg"
-		},
+            "impulses": 1,
+            "descrizione": "Lavatrice 18kg"
+        },
         "lavatrice_6": {
-		    "impulses": 1,
-			"descrizione": "Lavatrice 18kg"
-		},
+            "impulses": 1,
+            "descrizione": "Lavatrice 18kg"
+        },
         "lavatrice_7": {
-		    "impulses": 1,
-			"descrizione": "Lavatrice 18kg"			
+            "impulses": 1,
+            "descrizione": "Lavatrice 18kg"
         },
         "asciugatrice_8": {
             "impulses": 1,
@@ -69,37 +69,38 @@ MACHINES = {
         },
         "asciugatrice_12": {
             "impulses": 1,
-            "descrizione": "Asciugatrice"			
+            "descrizione": "Asciugatrice"
         }
     },
     "verucchio": {
         "lavatrice_1": {
             "impulses": 5,
             "descrizione": "Lavatrice animali"
-        }
+        },
         "lavatrice_3": {
             "impulses": 5,
             "descrizione": "Lavatrice 8kg"
-        }
+        },
         "lavatrice_4": {
             "impulses": 5,
             "descrizione": "Lavatrice 8kg"
-        }
+        },
         "lavatrice_5": {
             "impulses": 8,
-            "descrizione": "Lavatrice 18kg"	
-        }
+            "descrizione": "Lavatrice 18kg"
+        },
         "lavatrice_6": {
             "impulses": 8,
             "descrizione": "Lavatrice 18kg"
-        }
+        },
         "asciugatrice_7": {
             "impulses": 5,
-            "descrizione": "asciugatrice"		
-        }
+            "descrizione": "Asciugatrice"
+        },
         "asciugatrice_8": {
             "impulses": 5,
-            "descrizione": "asciugatrice"			
+            "descrizione": "Asciugatrice"
+        }
     }
 }
 
