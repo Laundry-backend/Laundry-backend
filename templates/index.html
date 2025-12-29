@@ -1,23 +1,10 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta charset="UTF-8">
-    <title>Dashboard Lavanderia</title>
+    <title>Lavanderia - Stato</title>
 </head>
 <body>
-    <h1>Stato Macchine</h1>
-
-    {% for location, machines in machines.items() %}
-        <h2>{{ location }}</h2>
-        <ul>
-        {% for name, data in machines.items() %}
-            <li>
-                <strong>{{ name }}</strong> —
-                Stato: {{ data.status }},
-                Ultimo avvio: {{ data.last_start }}
-            </li>
-        {% endfor %}
-        </ul>
-    {% endfor %}
+    <h1>Stato macchine</h1>
+    <pre>{{ machines | tojson(indent=2) }}</pre>
 </body>
 </html>
