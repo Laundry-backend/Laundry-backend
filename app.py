@@ -1,3 +1,5 @@
+import threading
+import time
 import os
 import stripe
 import logging
@@ -37,15 +39,34 @@ MACHINES = {
         "asciugatrice_12": {"impulses": 1, "descrizione": "Asciugatrice"},
     },
     "verucchio": {
-        "lavatrice_1": {"impulses": 5, "descrizione": "Lavatrice animali"},
+        "lavatrice_1": {"impulses": 4, "descrizione": "Lavatrice animali"},
         "lavatrice_3": {"impulses": 5, "descrizione": "Lavatrice 8kg"},
         "lavatrice_4": {"impulses": 5, "descrizione": "Lavatrice 8kg"},
         "lavatrice_5": {"impulses": 8, "descrizione": "Lavatrice 18kg"},
         "lavatrice_6": {"impulses": 8, "descrizione": "Lavatrice 18kg"},
+        "asciugatrice_2": {"impulses": 4, "descrizione": "asciugatrice animali"},
         "asciugatrice_7": {"impulses": 5, "descrizione": "Asciugatrice"},
         "asciugatrice_8": {"impulses": 5, "descrizione": "Asciugatrice"},
     }
 }
+# GESTIONE IMPUT SIMULTANEI
+import threading
+import time
+
+def attiva_macchina_async(location, machine, impulses):
+    """
+    Simula l'attivazione della macchina in modo asincrono
+    """
+    logger.info(f"🚀 Avvio macchina {machine} ({location})")
+
+    def worker():
+        for i in range(impulses):
+            logger.info(f"⚡ Impulso {i+1}/{impulses}")
+            time.sleep(1)
+        logger.info(f"✅ Fine ciclo macchina {machine}")
+
+    thread = threading.Thread(target=worker)
+    thread.start()
 
 # ----------------------------------------
 # APP
@@ -112,7 +133,9 @@ def stripe_webhook():
         logger.info(f"⚙️ Macchina: {machine}")
         logger.info(f"🔁 Impulsi: {impulses}")
 
-        # QUI andrà il comando reale per attivare il relè
+        # QUI PARTE IL relè
+        attiva_macchina_async(location, machine, impulses)
+
 
     return "", 200
 
