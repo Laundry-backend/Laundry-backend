@@ -1,5 +1,3 @@
 flask
 stripe
-requests
-
-
+gunicorn
