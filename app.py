@@ -89,9 +89,25 @@ def attiva_macchina_async(location, machine, impulses):
 app = Flask(__name__)
 
 
+from flask import render_template
+
 @app.route("/")
 def home():
+    return render_template("index.html")
+
+
+@app.route("/dashboard")
+def dashboard():
+    return render_template("index.html", machines=machine_status)
+
+def home():
     return "Backend lavanderia attivo"
+    from flask import render_template
+
+@app.route("/dashboard")
+def dashboard():
+    return render_template("index.html")
+
 
 
 @app.route("/status")
