@@ -69,7 +69,7 @@ app = Flask(__name__)
 # -------------------------------------------------
 # ROUTES
 # -------------------------------------------------
-
+from flask import render_template
 @app.route("/")
 def home():
     return render_template("index.html", machines=machine_status)
