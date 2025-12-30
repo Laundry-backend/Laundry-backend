@@ -112,14 +112,14 @@ def stripe_webhook():
             return "", 400
 # QUI VENGONO IMPOSTATI I TEMPI DI ECCITAMENTO RELE
         def worker():
-    for i in range(impulses):
-        logger.info(f"⚡ Impulso {i+1}/{impulses} - ON")
-        machine_status[location][machine]["status"] = "on"
-        time.sleep(0.5)
+            for i in range(impulses):
+                logger.info(f"⚡ Impulso {i+1}/{impulses} - ON")
+                machine_status[location][machine]["status"] = "on"
+                time.sleep(0.5)
 
-        logger.info(f"⚡ Impulso {i+1}/{impulses} - OFF")
-        machine_status[location][machine]["status"] = "off"
-        time.sleep(0.5)
+                logger.info(f"⚡ Impulso {i+1}/{impulses} - OFF")
+                machine_status[location][machine]["status"] = "off"
+                time.sleep(0.5)
 
     logger.info(f"✅ Sequenza completata per {machine}")
     
