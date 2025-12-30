@@ -40,12 +40,12 @@ MACHINES = {
         "asciugatrice_12": {"impulses": 1},
     },
     "verucchio": {
-        "lavatrice_1": {"impulses": 4},
+        "lavatrice_1_animali": {"impulses": 4},
         "lavatrice_3": {"impulses": 5},
         "lavatrice_4": {"impulses": 5},
         "lavatrice_5": {"impulses": 8},
         "lavatrice_6": {"impulses": 8},
-        "asciugatrice_2": {"impulses": 4},
+        "asciugatrice_2_animali": {"impulses": 4},
         "asciugatrice_7": {"impulses": 5},
         "asciugatrice_8": {"impulses": 5},
     }
@@ -110,12 +110,19 @@ def stripe_webhook():
 
         if location not in MACHINES or machine not in MACHINES[location]:
             return "", 400
-
+# QUI VENGONO IMPOSTATI I TEMPI DI ECCITAMENTO RELE
         def worker():
-            machine_status[location][machine]["status"] = "running"
-            machine_status[location][machine]["last_start"] = datetime.now().isoformat()
-            time.sleep(MACHINES[location][machine]["impulses"])
-            machine_status[location][machine]["status"] = "idle"
+    for i in range(impulses):
+        logger.info(f"⚡ Impulso {i+1}/{impulses} - ON")
+        machine_status[location][machine]["status"] = "on"
+        time.sleep(0.5)
+
+        logger.info(f"⚡ Impulso {i+1}/{impulses} - OFF")
+        machine_status[location][machine]["status"] = "off"
+        time.sleep(0.5)
+
+    logger.info(f"✅ Sequenza completata per {machine}")
+    
 
         threading.Thread(target=worker, daemon=True).start()
 
