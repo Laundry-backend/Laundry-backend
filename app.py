@@ -110,6 +110,9 @@ def stripe_webhook():
 
         if location not in MACHINES or machine not in MACHINES[location]:
             return "", 400
+            
+        impulses = MACHINES[location][machine]["impulses"]
+        
 # QUI VENGONO IMPOSTATI I TEMPI DI ECCITAMENTO RELE
         def worker():
             for i in range(impulses):
