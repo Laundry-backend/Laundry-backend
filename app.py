@@ -121,7 +121,7 @@ def stripe_webhook():
                 machine_status[location][machine]["status"] = "off"
                 time.sleep(0.5)
 
-    logger.info(f"✅ Sequenza completata per {machine}")
+            logger.info(f"✅ Sequenza completata per {machine}")
     
 
         threading.Thread(target=worker, daemon=True).start()
