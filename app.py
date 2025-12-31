@@ -141,10 +141,7 @@ def stripe_webhook():
             # ---- IMPULSI ----
         for i in range(impulses):
             logger.info(f"⚡ Impulso {i+1}/{impulses} - ON")
-            # qui andrà il comando al relè
             time.sleep(0.5)
-            
-            
             logger.info(f"⚡ Impulso {i+1}/{impulses} - OFF")
             time.sleep(0.5)
 
@@ -153,8 +150,8 @@ def stripe_webhook():
         time.sleep(LOCK_TIME)
 
         # ---- FINE ----
+        machine_status[location][machine]["status"] = "idle"
         machine_locks[location][machine] = False
-        
         logger.info(f"✅ Macchina {machine} pronta")
 
     threading.Thread(target=worker, daemon=True).start()
