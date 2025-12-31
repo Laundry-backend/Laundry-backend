@@ -1,41 +1,19 @@
-import time
-import hmac
-import hashlib
-import requests
-import json
+from ewelink import EWeLink
 
-APP_ID = "
-0ygkstU1AovdDXtI65mok181GCCY87EF"
-APP_SECRET = "
-0UZMVs2oaSoFiYcqtDM88hOTFLgLpZXu"
+# INSERISCI QUI LE TUE CREDENZIALI
+EMAIL = "la_tua_email@email.com"
+PASSWORD = "la_tua_password"
+REGION = "eu"   # Europa
 
-url = "https://eu-apia.coolkit.cc/v2/user/login"
+# Crea client
+ewelink = EWeLink(
+    email=EMAIL,
+    password=PASSWORD,
+    region=REGION
+)
 
-timestamp = str(int(time.time() * 1000))
-nonce = "123456"
+# Login
+response = ewelink.login()
 
-payload = {
-    "email": "mattia.millebolle@gmail.com",
-    "password": "Millebolle.1",
-    "countryCode": "39"
-}
-
-# genera firma
-message = APP_ID + nonce + timestamp
-sign = hmac.new(
-    APP_SECRET.encode(),
-    message.encode(),
-    hashlib.sha256
-).hexdigest()
-
-headers = {
-    "Content-Type": "application/json",
-    "X-CK-Appid": APP_ID,
-    "X-CK-Nonce": nonce,
-    "Authorization": f"Sign {sign}",
-    "X-CK-Expire": timestamp
-}
-
-res = requests.post(url, json=payload, headers=headers)
-print(res.status_code)
-print(res.text)
+print("LOGIN RESPONSE:")
+print(response)
