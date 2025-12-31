@@ -137,7 +137,7 @@ def stripe_webhook():
             time.sleep(0.5)
 
         # BLOCCO macchina (tempo ciclo)
-        logger.info(f"⏳ Macchina in funzione per {LOCK_TIME} secondi")
+        logger.info(f"⏳ Blocco macchina per {LOCK_TIME} secondi")
         time.sleep(LOCK_TIME)
 
         # ---- FINE ----
