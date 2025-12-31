@@ -154,6 +154,7 @@ def stripe_webhook():
 
         # ---- FINE ----
         machine_locks[location][machine] = False
+        
         logger.info(f"✅ Macchina {machine} pronta")
 
     threading.Thread(target=worker, daemon=True).start()
