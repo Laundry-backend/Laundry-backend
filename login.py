@@ -1,8 +1,8 @@
 from ewelink import EWeLink
 
 # INSERISCI QUI LE TUE CREDENZIALI
-EMAIL = "la_tua_email@email.com"
-PASSWORD = "la_tua_password"
+EMAIL = "mattia.millebolle@gmail.com"
+PASSWORD = "Millebolle.1"
 REGION = "eu"   # Europa
 
 # Crea client
