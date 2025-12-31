@@ -64,7 +64,13 @@ machine_status = {
         } for name in machines
     } for loc, machines in MACHINES.items()
 }
-
+ 
+# Lock per evitare doppie attivazioni
+machine_locks = {
+    loc: {
+        name: False for name in machines
+    } for loc, machines in MACHINES.items()
+}
 # -------------------------------------------------
 # APP
 # -------------------------------------------------
@@ -116,7 +122,13 @@ def stripe_webhook():
     if machine_status[location][machine]["status"] == "running":
         logger.warning(f"⚠️ Tentativo doppio avvio: {machine}")
         return "", 200
+    # BLOCCO SE GIÀ IN USO
+    if machine_locks[location][machine]:
+        logger.warning(f"⛔ Macchina {machine} già in funzione")
+        return "", 200
 
+    # Segna come occupata
+    machine_locks[location][machine] = True
     def worker():
         logger.info(f"🚀 Avvio macchina {machine}")
         
@@ -141,6 +153,7 @@ def stripe_webhook():
         time.sleep(LOCK_TIME)
 
         # ---- FINE ----
+        machine_locks[location][machine] = False
         machine_status[location][machine]["status"] = "idle"
         logger.info(f"✅ Macchina {machine} pronta")
 
