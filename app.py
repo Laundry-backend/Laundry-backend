@@ -133,28 +133,28 @@ def stripe_webhook():
     def worker():
         logger.info(f"🚀 Avvio macchina {machine}")
         
-        # Segna la macchina come in uso
-        # 1️Impulso (LED acceso)
-        machine_status[location][machine]["status"] = "pulse"
+        # MACCHINA IN FUNZIONE
+        machine_status[location][machine]["status"] = "running"
+        machine_status[location][machine]["last_start"] = datetime.now().isoformat()
+
         # ---- IMPULSI ----
         for i in range(MACHINES[location][machine]["impulses"]):
-            logger.info(f"⚡ Impulso {i+1}/{impulses} - ON")
-            time.sleep(PULSE_ON_TIME)
+             logger.info(f"⚡ Impulso {i+1}/{MACHINES[location][machine]['impulses']} - ON")
+             time.sleep(PULSE_ON_TIME)
 
-            logger.info(f"⚡ Impulso {i+1}/{impulses} - OFF")
+            logger.info(f"⚡ Impulso {i+1}/{MACHINES[location][machine]['impulses']} - OFF")
             time.sleep(PULSE_OFF_TIME)
             
 
-        # BLOCCO macchina (tempo ciclo)
+        # BLOCCO macchina (non lampeggia led)
+        logger.info(f"⏳ Macchina bloccata per {LOCK_TIME} secondi")
         machine_status[location][machine]["status"] = "locked"
-        logger.info(f"⏳ Macchina bloccata per {LOCK_TIME}s")
         time.sleep(LOCK_TIME)
 
-        # ---- FINE ----
-        # 3️Pronta di nuovo
-        machine_status[location][machine]["status"] = "idle"
-        logger.info(f"✅ Macchina pronta")
-
+        # RITORNA PRONTA A RICEVERE PAGAMENTO
+        machine_status[location][machine]["status"] = "Pronta a ricevere pagamento"
+        logger.info(f"✅ Macchina {machine} pronta")
+    
     threading.Thread(target=worker, daemon=True).start()
 
     return "", 200
