@@ -72,7 +72,7 @@ app = Flask(__name__)
 
 @app.route("/")
 def home():
-    return render_template("dashboard.html")
+    return render_template("index.html", machines=machine_status)
 
 
 @app.route("/status")
@@ -122,7 +122,7 @@ D
         machine_status[location][machine]["status"] = "running"
         machine_status[location][machine]["last_start"] = datetime.now().isoformat()
 
-        # Simula impulso reale
+        # Simula impulso reale rele
         time.sleep(1)
 
         # BLOCCO macchina (tempo ciclo)
