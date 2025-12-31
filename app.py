@@ -72,7 +72,7 @@ app = Flask(__name__)
 
 @app.route("/")
 def home():
-    return render_template("index.html", machines=machine_status)
+    return render_template("dashboard.html")
 
 
 @app.route("/status")
@@ -111,7 +111,7 @@ def stripe_webhook():
     # sicurezza
     if location not in MACHINES or machine not in MACHINES[location]:
         return "", 400
-
+D
     # EVITA DOPPIO AVVIO
     if machine_status[location][machine]["status"] == "running":
         logger.warning(f"⚠️ Tentativo doppio avvio: {machine}")
