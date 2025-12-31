@@ -5,8 +5,8 @@ import threading
 import time
 from flask import Flask, request, render_template
 from datetime import datetime
-PULSE_ON_TIME = 5.0   # secondi ON e
-PULSE_OFF_TIME = 5.0  # secondi OFF e
+PULSE_ON_TIME = 1.0   # secondi ON e
+PULSE_OFF_TIME = 1.0  # secondi OFF e
 
 # -------------------------------------------------
 # CONFIG
@@ -22,7 +22,7 @@ STRIPE_WEBHOOK_SECRET = os.environ.get("STRIPE_WEBHOOK_SECRET")
 # -------------------------------------------------
 
 # Tempo di blocco macchina (secondi)
-LOCK_TIME = 300   # 5 minuti
+LOCK_TIME = 180   # espresso in secondi
 
 # -------------------------------------------------
 # CONFIGURAZIONE MACCHINE
@@ -146,12 +146,12 @@ def stripe_webhook():
             time.sleep(PULSE_OFF_TIME)
   
         # BLOCCO MACCHINA (lavaggio in corso)
-        machine_status[location][machine]["status"] = "locked"
+        machine_status[location][machine]["status"] = "in uso"
         logger.info(f"⏳ Macchina bloccata per {LOCK_TIME} secondi")
         time.sleep(LOCK_TIME)
         
         # RITORNA PRONTA A RICEVERE PAGAMENTO
-        machine_status[location][machine]["status"] = "idle"
+        machine_status[location][machine]["status"] = "pronta a ricevere pagamento"
         logger.info(f"✅ Macchina {machine} pronta")
     
     threading.Thread(target=worker, daemon=True).start()
