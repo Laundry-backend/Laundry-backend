@@ -7,19 +7,20 @@ from flask import Flask, request, render_template
 from datetime import datetime
 
 # -------------------------------------------------
-# CONFIGURAZIONE LOG
+# CONFIG
 # -------------------------------------------------
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s [%(levelname)s] %(message)s"
-)
+logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
 logger = logging.getLogger(__name__)
 
-# -------------------------------------------------
-# STRIPE
-# -------------------------------------------------
 stripe.api_key = os.environ.get("STRIPE_SECRET_KEY")
 STRIPE_WEBHOOK_SECRET = os.environ.get("STRIPE_WEBHOOK_SECRET")
+
+# -------------------------------------------------
+# TEMPO DI BLOCCO DOPO AVVIO
+# -------------------------------------------------
+
+# Tempo di blocco macchina (secondi)
+LOCK_TIME = 300   # 5 minuti
 
 # -------------------------------------------------
 # CONFIGURAZIONE MACCHINE
@@ -51,25 +52,23 @@ MACHINES = {
     }
 }
 
-# -------------------------------------------------
-# STATO MACCHINE
-# -------------------------------------------------
+# -----------------------------
+# STATO E LOCK DI SICUREZZA
+# -----------------------------
+
 machine_status = {
-    location: {
-        name: {"status": "idle", "last_start": None}
-        for name in machines
-    }
-    for location, machines in MACHINES.items()
+    loc: {
+        name: {
+            "status": "idle",
+            "last_start": None
+        } for name in machines
+    } for loc, machines in MACHINES.items()
 }
 
 # -------------------------------------------------
-# FLASK APP
+# APP
 # -------------------------------------------------
 app = Flask(__name__)
-
-# -------------------------------------------------
-# ROUTES
-# -------------------------------------------------
 
 @app.route("/")
 def home():
@@ -84,50 +83,56 @@ def status():
 @app.route("/webhook/stripe", methods=["POST"])
 def stripe_webhook():
     payload = request.data
-    sig_header = request.headers.get("Stripe-Signature")
+    sig = request.headers.get("Stripe-Signature")
 
     try:
         event = stripe.Webhook.construct_event(
-            payload, sig_header, STRIPE_WEBHOOK_SECRET
+            payload, sig, STRIPE_WEBHOOK_SECRET
         )
     except Exception as e:
         logger.error(f"Webhook error: {e}")
         return "", 400
 
-    if event["type"] == "checkout.session.completed":
-        session = event["data"]["object"]
+    if event["type"] != "checkout.session.completed":
+        return "", 200
 
-        line_items = stripe.checkout.Session.list_line_items(session["id"], limit=1)
-        item = line_items.data[0]
-        price = stripe.Price.retrieve(item.price.id)
-        product = stripe.Product.retrieve(price.product)
+    session = event["data"]["object"]
+    line_items = stripe.checkout.Session.list_line_items(session["id"], limit=1)
+    item = line_items.data[0]
+    price = stripe.Price.retrieve(item.price.id)
+    product = stripe.Product.retrieve(price.product)
 
-        machine = product.metadata.get("machine")
-        location = product.metadata.get("location")
+    machine = product.metadata.get("machine")
+    location = product.metadata.get("location")
 
-        if not machine or not location:
-            return "", 400
+    if not machine or not location:
+        return "", 400
 
-        if location not in MACHINES or machine not in MACHINES[location]:
-            return "", 400
-            
-        impulses = MACHINES[location][machine]["impulses"]
-        
-# QUI VENGONO IMPOSTATI I TEMPI DI ECCITAMENTO RELE
-        def worker():
-            for i in range(impulses):
-                logger.info(f"⚡ Impulso {i+1}/{impulses} - ON")
-                machine_status[location][machine]["status"] = "on"
-                time.sleep(0.5)
+    # sicurezza
+    if location not in MACHINES or machine not in MACHINES[location]:
+        return "", 400
 
-                logger.info(f"⚡ Impulso {i+1}/{impulses} - OFF")
-                machine_status[location][machine]["status"] = "off"
-                time.sleep(0.5)
+    # EVITA DOPPIO AVVIO
+    if machine_status[location][machine]["status"] == "running":
+        logger.warning(f"⚠️ Tentativo doppio avvio: {machine}")
+        return "", 200
 
-            logger.info(f"✅ Sequenza completata per {machine}")
-    
+    def worker():
+        logger.info(f"🚀 Avvio macchina {machine}")
+        machine_status[location][machine]["status"] = "running"
+        machine_status[location][machine]["last_start"] = datetime.now().isoformat()
 
-        threading.Thread(target=worker, daemon=True).start()
+        # Simula impulso reale
+        time.sleep(1)
+
+        # BLOCCO macchina (tempo ciclo)
+        logger.info(f"⏳ Macchina in funzione per {LOCK_TIME} secondi")
+        time.sleep(LOCK_TIME)
+
+        machine_status[location][machine]["status"] = "idle"
+        logger.info(f"✅ Macchina {machine} pronta")
+
+    threading.Thread(target=worker, daemon=True).start()
 
     return "", 200
 
