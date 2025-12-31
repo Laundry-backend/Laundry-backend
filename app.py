@@ -139,8 +139,8 @@ def stripe_webhook():
 
         # ---- IMPULSI ----
         for i in range(MACHINES[location][machine]["impulses"]):
-             logger.info(f"⚡ Impulso {i+1}/{MACHINES[location][machine]['impulses']} - ON")
-             time.sleep(PULSE_ON_TIME)
+            logger.info(f"⚡ Impulso {i+1}/{MACHINES[location][machine]['impulses']} - ON")
+            time.sleep(PULSE_ON_TIME)
 
             logger.info(f"⚡ Impulso {i+1}/{MACHINES[location][machine]['impulses']} - OFF")
             time.sleep(PULSE_OFF_TIME)
