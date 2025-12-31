@@ -124,7 +124,7 @@ def stripe_webhook():
         machine_status[location][machine]["last_start"] = datetime.now().isoformat()
 
         # ---- IMPULSI ----
-        for i in range(impulses):
+    for i in range(impulses):
         logger.info(f"⚡ Impulso {i+1}/{impulses} - ON")
         # qui andrà il comando al relè
         time.sleep(0.5)
