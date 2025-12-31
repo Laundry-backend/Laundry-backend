@@ -5,6 +5,8 @@ import threading
 import time
 from flask import Flask, request, render_template
 from datetime import datetime
+PULSE_ON_TIME = 5.0   # secondi ON
+PULSE_OFF_TIME = 5.0  # secondi OFF
 
 # -------------------------------------------------
 # CONFIG
@@ -136,8 +138,12 @@ def stripe_webhook():
         machine_status[location][machine]["status"] = "pulse"
         # ---- IMPULSI ----
         for i in range(MACHINES[location][machine]["impulses"]):
-            logger.info(f"⚡ Impulso {i+1}")
-            time.sleep(0.5)
+            logger.info(f"⚡ Impulso {i+1}/{impulses} - ON")
+            time.sleep(PULSE_ON_TIME)
+
+            logger.info(f"⚡ Impulso {i+1}/{impulses} - OFF")
+            time.sleep(PULSE_OFF_TIME)
+            
 
         # BLOCCO macchina (tempo ciclo)
         machine_status[location][machine]["status"] = "locked"
