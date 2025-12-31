@@ -5,8 +5,8 @@ import threading
 import time
 from flask import Flask, request, render_template
 from datetime import datetime
-PULSE_ON_TIME = 5.0   # secondi ON
-PULSE_OFF_TIME = 5.0  # secondi OFF
+PULSE_ON_TIME = 5.0   # secondi ON e
+PULSE_OFF_TIME = 5.0  # secondi OFF e
 
 # -------------------------------------------------
 # CONFIG
