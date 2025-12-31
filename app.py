@@ -72,7 +72,7 @@ app = Flask(__name__)
 
 @app.route("/")
 def home():
-    return render_template("index.html", machines=machine_status)
+    return render_template("dashboard.html", machines=machine_status)
 
 
 @app.route("/status")
