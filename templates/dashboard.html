@@ -3,29 +3,61 @@
 <head>
     <meta charset="UTF-8">
     <title>Stato Lavanderia</title>
+
     <style>
         body {
             font-family: Arial;
-            background: #f2f2f2;
+            background: #f4f4f4;
             padding: 20px;
         }
+
         h1 {
             margin-bottom: 20px;
         }
+
         .machine {
+            display: flex;
+            align-items: center;
             padding: 10px;
             margin-bottom: 8px;
             border-radius: 6px;
-            background: #eee;
+            background: #eaeaea;
+            font-size: 18px;
         }
-        .running {
-            background: #ffe08a;
+
+        .label {
+            flex: 1;
         }
-        .idle {
-            background: #b6f2b6;
+
+        /* LED base */
+        .led {
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            margin-right: 12px;
+            background: #888;
+        }
+
+        /* LED acceso (lampeggia) */
+        .led.on {
+            background: red;
+            animation: blink 1s infinite;
+            box-shadow: 0 0 8px red;
+        }
+
+        /* LED spento */
+        .led.off {
+            background: #2ecc71;
+        }
+
+        @keyframes blink {
+            0% { opacity: 1; }
+            50% { opacity: 0.3; }
+            100% { opacity: 1; }
         }
     </style>
 </head>
+
 <body>
 
 <h1>Stato macchine lavanderia</h1>
@@ -38,21 +70,28 @@ async function loadStatus() {
     const data = await res.json();
 
     let html = "";
+
     for (const location in data) {
         html += `<h2>${location}</h2>`;
+
         for (const machine in data[location]) {
-            const m = data[location][machine];
-            const cls = m.status === "running" ? "running" : "idle";
-            html += `<div class="machine ${cls}">
-                        <b>${machine}</b> — ${m.status}
-                     </div>`;
+            const state = data[location][machine].status;
+            const ledClass = state === "running" ? "on" : "off";
+
+            html += `
+                <div class="machine">
+                    <div class="led ${ledClass}"></div>
+                    <div class="label">${machine} — ${state}</div>
+                </div>
+            `;
         }
     }
 
     document.getElementById("machines").innerHTML = html;
 }
 
-setInterval(loadStatus, 2000);
+// aggiorna ogni 1 secondo
+setInterval(loadStatus, 1000);
 loadStatus();
 </script>
 
