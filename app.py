@@ -129,8 +129,9 @@ def stripe_webhook():
             logger.info(f"⚡ Impulso {i+1}/{impulses} - ON")
             # qui andrà il comando al relè
             time.sleep(0.5)
-
-            .info(f"⚡ Impulso {i+1}/{impulses} - OFF")
+            
+            
+            logger.info(f"⚡ Impulso {i+1}/{impulses} - OFF")
             time.sleep(0.5)
 
         # BLOCCO macchina (tempo ciclo)
