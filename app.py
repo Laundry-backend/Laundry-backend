@@ -119,16 +119,24 @@ def stripe_webhook():
 
     def worker():
         logger.info(f"🚀 Avvio macchina {machine}")
+        # Segna la macchina come in uso
         machine_status[location][machine]["status"] = "running"
         machine_status[location][machine]["last_start"] = datetime.now().isoformat()
 
-        # Simula impulso reale rele
-        time.sleep(1)
+        # ---- IMPULSI ----
+        for i in range(impulses):
+        logger.info(f"⚡ Impulso {i+1}/{impulses} - ON")
+        # qui andrà il comando al relè
+        time.sleep(0.5)
+
+        logger.info(f"⚡ Impulso {i+1}/{impulses} - OFF")
+        time.sleep(0.5)
 
         # BLOCCO macchina (tempo ciclo)
         logger.info(f"⏳ Macchina in funzione per {LOCK_TIME} secondi")
         time.sleep(LOCK_TIME)
 
+        # ---- FINE ----
         machine_status[location][machine]["status"] = "idle"
         logger.info(f"✅ Macchina {machine} pronta")
 
