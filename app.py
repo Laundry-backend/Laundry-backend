@@ -146,12 +146,12 @@ def stripe_webhook():
             time.sleep(PULSE_OFF_TIME)
   
         # BLOCCO MACCHINA (lavaggio in corso)
-        machine_status[location][machine]["status"] = "in uso"
+        machine_status[location][machine]["status"] = "locked"
         logger.info(f"⏳ Macchina bloccata per {LOCK_TIME} secondi")
         time.sleep(LOCK_TIME)
         
         # RITORNA PRONTA A RICEVERE PAGAMENTO
-        machine_status[location][machine]["status"] = "pronta a ricevere pagamento"
+        machine_status[location][machine]["status"] = "idle"
         logger.info(f"✅ Macchina {machine} pronta")
     
     threading.Thread(target=worker, daemon=True).start()
