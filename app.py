@@ -123,6 +123,8 @@ def stripe_webhook():
         # Segna la macchina come in uso
         machine_status[location][machine]["status"] = "running"
         machine_status[location][machine]["last_start"] = datetime.now().isoformat()
+        
+        impulses = MACHINES[location][machine]["impulses"]
 
             # ---- IMPULSI ----
         for i in range(impulses):
