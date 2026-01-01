@@ -1,10 +1,14 @@
+import asyncio
 from ewelink import EWeLink
 
-email = "mattia.millebolle@gmail.com"
-password = "Millebolle.1"
-region = "eu"  # per Europa
+EMAIL = "mattia.millebolle@gmail.com"
+PASSWORD = "Millebolle.1"
+REGION = "eu"
 
-ewelink = EWeLink(email, password, region)
+async def main():
+    client = EWeLink(EMAIL, PASSWORD, REGION)
+    result = await client.login()
+    print(result)
 
-response = ewelink.login()
-print(response)
+if __name__ == "__main__":
+    asyncio.run(main())
