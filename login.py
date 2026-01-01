@@ -1,20 +1,19 @@
 import asyncio
 from ewelink import EWeLink
 
-APP_ID = "0ygkstU1AovdDXtI65mok181GCCY87EF"
-APP_SECRET = "0UZMVs2oaSoFiYcqtDM88hOTFLgLpZXu"
 EMAIL = "mattia.millebolle@gmail.com"
 PASSWORD = "Millebolle.1"
 
 async def main():
-    client = EWeLink(
-        appid=APP_ID,
-        appsecret=APP_SECRET,
+    client = EWeLink()  # 👈 NIENTE parametri qui
+
+    result = await client.login(
+        email=EMAIL,
+        password=PASSWORD,
         region="eu"
     )
 
-    result = await client.login(EMAIL, PASSWORD)
-    print("LOGIN OK:")
+    print("LOGIN OK")
     print(result)
 
 if __name__ == "__main__":
