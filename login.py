@@ -1,6 +1,7 @@
 import asyncio
 from ewelink import EWeLink
 
+
 APP_ID = "0ygkstU1AovdDXtI65mok181GCCY87EF"
 APP_SECRET = "0UZMVs2oaSoFiYcqtDM88hOTFLgLpZXu"
 EMAIL = "mattia.millebolle@gmail.com"
