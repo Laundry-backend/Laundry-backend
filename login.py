@@ -3,18 +3,20 @@ from ewelink import EWeLink
 
 EMAIL = "mattia.millebolle@gmail.com"
 PASSWORD = "Millebolle.1"
+REGION = "eu"  # Europa
 
 async def main():
-    client = EWeLink()  # 👈 NIENTE parametri qui
-
-    result = await client.login(
+    client = EWeLink(
         email=EMAIL,
         password=PASSWORD,
-        region="eu"
+        region=REGION
     )
 
-    print("LOGIN OK")
-    print(result)
+    await client.login()
 
-if __name__ == "__main__":
-    asyncio.run(main())
+    devices = await client.get_devices()
+    print("Dispositivi trovati:")
+    for d in devices:
+        print(f"- {d['name']} | id: {d['deviceid']} | online: {d['online']}")
+
+asyncio.run(main())
