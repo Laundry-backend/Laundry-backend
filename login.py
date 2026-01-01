@@ -1,10 +1,8 @@
 import requests
 import json
 
-APP_ID = "
-0ygkstU1AovdDXtI65mok181GCCY87EF"
-APP_SECRET = "
-0UZMVs2oaSoFiYcqtDM88hOTFLgLpZXu"
+APP_ID = "0ygkstU1AovdDXtI65mok181GCCY87EF"
+APP_SECRET = "0UZMVs2oaSoFiYcqtDM88hOTFLgLpZXu"
 EMAIL = "mattia.millebolle@gmail.com"
 PASSWORD = "Millebolle.1"
 REGION = "eu"
