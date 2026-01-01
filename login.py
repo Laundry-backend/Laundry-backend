@@ -1,27 +1,22 @@
-import requests
-import json
+import asyncio
+from ewelink import EWeLink
 
 APP_ID = "0ygkstU1AovdDXtI65mok181GCCY87EF"
 APP_SECRET = "0UZMVs2oaSoFiYcqtDM88hOTFLgLpZXu"
 EMAIL = "mattia.millebolle@gmail.com"
 PASSWORD = "Millebolle.1"
-REGION = "eu"
 
-url = "https://eu-api.coolkit.cc/v2/user/login"
+async def main():
+    client = EWeLink(
+        appid=APP_ID,
+        appsecret=APP_SECRET,
+        region="eu"
+    )
 
-headers = {
-    "Content-Type": "application/json",
-    "X-CK-Appid": APP_ID
-}
+    await client.login(EMAIL, PASSWORD)
 
-payload = {
-    "email": EMAIL,
-    "password": PASSWORD,
-    "countryCode": "39"
-}
+    devices = await client.get_devices()
+    for d in devices:
+        print(d["name"], d["deviceid"])
 
-response = requests.post(url, json=payload, headers=headers)
-
-print("STATUS:", response.status_code)
-print("RESPONSE:")
-print(response.text)
+asyncio.run(main())
