@@ -3,6 +3,7 @@ import stripe
 import logging
 import threading
 import time
+import requests
 from flask import Flask, request, render_template
 from datetime import datetime
 PULSE_ON_TIME = 1.0   # secondi ON e
@@ -11,6 +12,11 @@ PULSE_OFF_TIME = 1.0  # secondi OFF e
 # -------------------------------------------------
 # CONFIG
 # -------------------------------------------------
+stripe.api_key = os.environ.get("STRIPE_SECRET_KEY")
+STRIPE_WEBHOOK_SECRET = os.environ.get("STRIPE_WEBHOOK_SECRET")
+HOME_ASSISTANT_URL = "http://10.220.89.34"  # IP della VM HA
+
+
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
 logger = logging.getLogger(__name__)
 
@@ -28,20 +34,6 @@ LOCK_TIME = 180   # espresso in secondi
 # CONFIGURAZIONE MACCHINE
 # -------------------------------------------------
 MACHINES = {
-    "gambettola": {
-        "lavatrice_1": {"impulses": 1},
-        "lavatrice_2": {"impulses": 1},
-        "lavatrice_3": {"impulses": 1},
-        "lavatrice_4": {"impulses": 1},
-        "lavatrice_5": {"impulses": 1},
-        "lavatrice_6": {"impulses": 1},
-        "lavatrice_7": {"impulses": 1},
-        "asciugatrice_8": {"impulses": 1},
-        "asciugatrice_9": {"impulses": 1},
-        "asciugatrice_10": {"impulses": 1},
-        "asciugatrice_11": {"impulses": 1},
-        "asciugatrice_12": {"impulses": 1},
-    },
     "verucchio": {
         "lavatrice_1_animali": {"impulses": 4},
         "lavatrice_3": {"impulses": 5},
@@ -57,21 +49,16 @@ MACHINES = {
 # -----------------------------
 # STATO E LOCK DI SICUREZZA
 # -----------------------------
-
-machine_status = {
-    loc: {
-        name: {
-            "status": "idle",
-            "last_start": None
-        } for name in machines
-    } for loc, machines in MACHINES.items()
 }
- 
+machine_status = {
+    name: {
+        "status": "idle",
+        "last_start": None
+    } for name in MACHINES
+} 
 # Lock per evitare doppie attivazioni
 machine_locks = {
-    loc: {
-        name: False for name in machines
-    } for loc, machines in MACHINES.items()
+    name: False for name in MACHINES
 }
 # -------------------------------------------------
 # APP
@@ -86,6 +73,18 @@ def home():
 @app.route("/status")
 def status():
     return machine_status
+# -------------------------------------------------
+# HOME ASSISTANT
+# -------------------------------------------------
+def trigger_home_assistant(machine):
+    url = f"{HOME_ASSISTANT_URL}/api/webhook/{machine}"
+    try:
+        r = requests.post(url, timeout=3)
+        r.raise_for_status()
+        logger.info(f"✅ Webhook HA inviato per {machine}")
+    except Exception as e:
+        logger.error(f"❌ Errore webhook HA ({machine}): {e}")
+
 
 
 @app.route("/webhook/stripe", methods=["POST"])
@@ -113,12 +112,8 @@ def stripe_webhook():
     machine = product.metadata.get("machine")
     location = product.metadata.get("location")
 
-    if not machine or not location:
-        return "", 400
-
-    # sicurezza
-    if location not in MACHINES or machine not in MACHINES[location]:
-        return "", 400
+    if not machine or machine not in MACHINES:
+        return "", 400    
 
     # EVITA DOPPIO AVVIO
     if machine_status[location][machine]["status"] == "running":
@@ -134,11 +129,11 @@ def stripe_webhook():
         logger.info(f"🚀 Avvio macchina {machine}")
         
         # MACCHINA IN FUNZIONE
-        machine_status[location][machine]["status"] = "running"
-        machine_status[location][machine]["last_start"] = datetime.now().isoformat()
+        machine_status[machine]["status"] = "running"
+        machine_status[machine]["last_start"] = datetime.now().isoformat()
 
         # ---- IMPULSI ----
-        for i in range(MACHINES[location][machine]["impulses"]):
+        for i in range(MACHINES[machine]["impulses"]):
             logger.info(f"⚡ Impulso {i+1}/{MACHINES[location][machine]['impulses']} - ON")
             time.sleep(PULSE_ON_TIME)
 
@@ -146,7 +141,7 @@ def stripe_webhook():
             time.sleep(PULSE_OFF_TIME)
   
         # BLOCCO MACCHINA (lavaggio in corso)
-        machine_status[location][machine]["status"] = "locked"
+        machine_status[machine]["status"] = "locked"
         logger.info(f"⏳ Macchina bloccata per {LOCK_TIME} secondi")
         time.sleep(LOCK_TIME)
         
@@ -154,7 +149,8 @@ def stripe_webhook():
         machine_status[location][machine]["status"] = "idle"
         logger.info(f"✅ Macchina {machine} pronta")
     
-    threading.Thread(target=worker, daemon=True).start()
+    trigger_home_assistant(machine)
+
 
     return "", 200
 
