@@ -15,7 +15,7 @@ stripe.api_key = os.environ.get("STRIPE_SECRET_KEY")
 STRIPE_WEBHOOK_SECRET = os.environ.get("STRIPE_WEBHOOK_SECRET")
 
 # IP della VM Home Assistant (solo LAN)
-HOME_ASSISTANT_URL = "http://10.220.89.34"
+HOME_ASSISTANT_URL = "http://10.220.89.34:8123"
 
 # -------------------------------------------------
 # CONFIGURAZIONE MACCHINE (SEDE VERUCCHIO)
