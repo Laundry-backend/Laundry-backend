@@ -59,12 +59,20 @@ def status():
 # -------------------------------------------------
 def trigger_home_assistant(machine: str):
     url = f"{HOME_ASSISTANT_URL}/api/webhook/{machine}"
+
+    payload = {
+        "impulses": MACHINES[machine]["impulses"]
+    }
+
     try:
-        r = requests.post(url, timeout=3)
+        r = requests.post(url, json=payload, timeout=3)
         r.raise_for_status()
-        logger.info(f"✅ Webhook HA inviato per {machine}")
+        logger.info(
+            f"✅ Webhook HA inviato per {machine} "
+            f"({payload['impulses']} impulsi)"
+        )
     except Exception as e:
-        logger.error(f"❌ Errore webhook HA ({machine}): {e}")
+        logger.error(f"❌ Errore webhook HA ({machine}): {e}")      
 
 # -------------------------------------------------
 # STRIPE WEBHOOK
